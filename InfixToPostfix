@@ -1,0 +1,83 @@
+import java.util.*;
+class InfixToPostfix
+{
+    public static boolean operator(char ch)
+    {
+        return (ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '^');
+    }
+    
+    public static int precedence(char ch)
+    {
+        switch(ch)
+        {
+            case '+':
+            case '-':
+                return 1;
+            
+            case '*':
+            case '/':
+                return 2;
+                
+            case '^':
+                return 3;
+            default:
+                return -1;
+        }
+    }
+    
+    public static String InfixToPostfix(String infix)
+    {
+        Stack<Character> stack = new Stack<>();
+        StringBuilder postfix=new StringBuilder();
+        
+        // traverse the infix expression
+        for(int i=0;i<infix.length();i++)
+        {
+            char currentchar = infix.charAt(i);
+            
+            //if the char is operand, push into the stack
+            if(Character.isLetterOrDigit(currentchar))
+            {
+                postfix.append(currentchar);
+            }
+            // if currentchar '(' push into stack
+            else if(currentchar == '(')
+            {
+                stack.push(currentchar);
+            }
+            // if currentchar ')' pop until '('
+            else if(currentchar == ')')
+            {
+                while(!stack.isEmpty() && stack.peek()!='(')
+                {
+                    postfix.append(stack.pop());
+                }
+                stack.pop(); // pop '(' from stack
+            }
+            //if currentchar is operand 
+            else if(operator(currentchar))
+            {
+                while(!stack.isEmpty() && precedence(stack.peek())>=precedence(currentchar))
+                {
+                    postfix.append(stack.pop());
+                }
+                stack.push(currentchar);
+            }
+
+        }
+        // pop the remaining elements from stack
+            while(!stack.isEmpty())
+            {
+                postfix.append(stack.pop());
+            }
+            return postfix.toString();
+    }
+    
+    public static void main(String a[])
+    {
+        String infix="A+B*C*D/E";
+        String postfix=InfixToPostfix(infix);
+        System.out.println("Infix Expression: "+infix);
+        System.out.println("Postfix Expression: "+postfix);
+    }
+}
